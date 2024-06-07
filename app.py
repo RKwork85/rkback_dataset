@@ -111,37 +111,43 @@ def register_by_rkwork():
 
 # 添加单条数据集
 @app.post("/v1/work/datasets/create")
+@jwt_required()
 def add_dataset():
-    uuid = session.get("uuid")
-    print("查看已有的uuid：", uuid)
+    current_user = get_jwt_identity()          
+    print('|/v1/work/datasets/create"| 用户添加单条数据到数据库: 当前登录的用户：',current_user)
+    # 获取用户
+    user = UserModel.query.filter_by(uuid=current_user).first()
+
     data = request.get_json()
-    # 拿
+    # 拿    # [[id,{dataset}],[],[]]                                                 
     instruction = data.get("instruction")
     output = data.get("output")
-    uuid = data.get("uuid")
-    user = UserModel.query.filter_by(uuid=uuid).first()
-    if user:  # 我需要返回该条数据集的id号  待解决
-        dataset = DatasetsModel(
-            instruction=data.get("instruction"),
-            output=data.get("output"),
-            user_id=user.id,
-        )
-        db.session.add(dataset)
+    dataset = DatasetsModel(
+        instruction=data.get("instruction"),
+        output=data.get("output"),
+        user_id=user.id,
+    )
+    db.session.add(dataset)
+    db.session.commit()
+    print("用户添加单条数据成功")
+    return jsonify(msg="用户单条数据添加成功", dataset=[dataset.id,dataset.get_dataset()])
+
+# 删除单条数据集
+@app.delete("/v1/work/datasets/delete/<int:id>")
+@jwt_required()
+def delete_dataset(id):
+    current_user = get_jwt_identity()          
+    print('|/v1/work/datasets/delete"| 用户删除数据库单条数据: 当前登录的用户：',current_user)
+    # 获取用户
+    dataset = DatasetsModel.query.filter_by(id=id).first()  # first(), all(), order_by()
+    if dataset:
+        db.session.delete(dataset)
         db.session.commit()
-        print("用户添加单条数据成功")
-        return jsonify(msg="用户单条数据添加成功", dataset=dataset.get_dataset())
-    else:                           # 没有uuid 存在的话
-        # 存
-        dataset = DatasetsModel(
-            instruction=data.get("instruction"), output=data.get("output")
-        )
-        db.session.add(dataset)
-        db.session.commit()
-        # 显示
-        print(dataset)
-        return jsonify(
-            msg="添加单条数据", dataset=data.get("dataset"), output=data.get("output")
-        )
+        return jsonify(msg =f"删除第 {id} 数据集成功!" )
+    else:
+        return jsonify({"msg": "数据库中没有该数据集！"})
+
+
 
 
 # 添加多条数据集 要和用户关联

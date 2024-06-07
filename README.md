@@ -67,13 +67,18 @@ update_dataset       PUT      /dataset/<int:uid>
 
 >t1: 更新了四个接口：6.6.2024 21:36
 
-v1/w../create:  创建数据集
+v1/w../create:  创建单条数据集
 
 v1/w../synchronize: 同步数据集
 
 v1/w../list:    获取用户所有数据集
 
 v1/s../login    登录授权
+
+>t2: 更新了一个接口 ；完善了后台数据传输格式： 6.7.2024 14:17
+
+v1/w../delete:  删除单条数据集
+
 
 
 
