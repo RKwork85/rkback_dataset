@@ -206,25 +206,26 @@ def get_dataset_by_id(id):
         return jsonify(msg=f"{id}数据集不存在！！！")
 
 
-@app.put("/dataset/<int:uid>")
-def update_dataset(uid):
+@app.put("/v1/work/datasets/update/<int:id>")
+def update_dataset(id):
     try:
-        instruction = request.args.get("instruction")
-        output = request.args.get("output")
+        data = request.get_json()
+        instruction = data.get("instruction")
+        output = data.get("output")
         print(instruction, output)
-        dataset = db.get_or_404(DatasetsModel, uid)
+        dataset = db.get_or_404(DatasetsModel, id)
         olddataset = dataset.get_dataset()
         if dataset:
             print(dataset)
             dataset.instruction = instruction
             dataset.output = output
             db.session.commit()
-            dataset = db.get_or_404(DatasetsModel, uid)
+            dataset = db.get_or_404(DatasetsModel, id)
 
             return {
                 "msg": "数据集数据更新成功",
                 "oldDataset": olddataset,
-                "newDataset": dataset.get_dataset(),
+                "newDataset": [dataset.id, dataset.get_dataset()],
             }
         else:
             return jsonify({"msg": "数据库中没有数据！"})
