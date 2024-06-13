@@ -1,5 +1,6 @@
 from datetime import datetime
-from flask import Flask, jsonify, render_template, request, session, g
+import os
+from flask import Flask, jsonify, render_template, request, send_from_directory, session, g
 from flask_jwt_extended import (JWTManager, jwt_required, create_access_token, get_jwt_identity)
 from flask_migrate import Migrate
 from flask_cors import CORS
@@ -271,6 +272,31 @@ def dashboard():
         return jsonify({"message": f'Welcome! Your session UUID is: {session["uuid"]}'})
     else:
         return jsonify({"error": "Not logged in"})
+
+@app.route('/download/<filename>')
+@jwt_required()
+def download_file(filename):
+    # 使用 send_from_directory() 函数返回文件
+    current_user = get_jwt_identity()       
+    user = UserModel.query.filter_by(uuid=current_user).first()   
+
+    current_path = os.path.dirname(__file__)
+
+    print('|/v1/work/datasets/delete"| 用户生成数据集内容: 当前登录的用户：',current_user)
+
+    dataset_dir, dataset_path = user.generate_dataset(current_path)
+
+    if os.path.exists(dataset_path):
+        full_name = os.path.basename(dataset_path)
+        print(full_name)
+        return send_from_directory(dataset_dir, full_name, as_attachment=True)
+        # return jsonify(msg='生成成功')
+
+    else:
+        return jsonify(msg = '生成失败')
+
+
+
 
 
 @app.before_request  #  在请求之前就自动获取变量值， 每次请求都要写代码，获取用户的信息

@@ -1,3 +1,5 @@
+import json
+import os
 from exts import db
 from datetime import datetime
 from collections import OrderedDict
@@ -12,7 +14,24 @@ class UserModel(db.Model):
     join_time = db.Column(db.DateTime,default=datetime.now)
     datasets = db.relationship('DatasetsModel', backref='user')
     
+    def generate_dataset(self, dataset_path):
 
+        dataset_dir = os.path.join(dataset_path, 'static', 'datasets')
+        if not os.path.exists(dataset_dir):
+            os.makedirs(dataset_dir)
+
+        try:
+            dataset_path = os.path.join(dataset_dir, f"{self.uuid}-dataset-1.jsonl")
+            with open(dataset_path, 'w') as f:
+                for dataset in self.datasets:
+                    data = dataset.get_dataset()
+                    f.write(json.dumps(data, ensure_ascii=False) + '\n')
+
+                return dataset_dir, dataset_path
+        except Exception as error:
+            print(error)
+            return None
+        
 class DatasetsModel(db.Model):
 
     __tablename__="datasets"
