@@ -1,5 +1,5 @@
 # 使用现有的dsmysql:1.0镜像作为基础镜像
-FROM dsmysql:1.0
+FROM rkwork885/dsmysql:1.0
 
 # 将本地的dsmysql卷内容复制到镜像的/var/lib/mysql目录
 COPY data/ /var/lib/mysql

@@ -2,7 +2,7 @@ name: dsrkwork
 services:
   dsmysql:
     container_name: dsmysql
-    image: dsmysql:2.0
+    image: rkwork885/dsmysql:latest
     ports: 
       - "3306:3306"
     environment:
@@ -18,7 +18,7 @@ services:
   
   ds_flask:
     container_name: dsflask
-    image: ds_flask:latest
+    image: rkwork885/dsflask:1.0
     ports: 
       - "5000:5000"
     environment: 

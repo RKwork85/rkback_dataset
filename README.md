@@ -100,3 +100,6 @@ flask 后端接口应用  + mysql8 数据库
 
     5 docker compose 编写 将两个应用 启动
 
+dockerfile build
+>docker build -f Dockerfile -t name:tag .
+
