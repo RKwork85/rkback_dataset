@@ -84,6 +84,19 @@ v1/w../update: 更新单条数据集
 
 >t4: 更新dockerfile镜像文件
 
+### docker 打包
 
+flask 后端接口应用  + mysql8 数据库
 
+实现：
+
+    1 使用 **docker** 启动官方mysql8镜像
+
+    2 flask 实现与数据库对接后，对数据库表结构进行修改——修改的东西是持久化存储在卷中的
+
+    3 将 原镜像以及卷 重新打包成 dockerfile 镜像 
+
+    4 打包该仓库为docker镜像 
+
+    5 docker compose 编写 将两个应用 启动
 
