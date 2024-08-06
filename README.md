@@ -82,6 +82,8 @@ v1/w../delete:  删除单条数据集
 >t3: 完成更新数据集接口
 v1/w../update: 更新单条数据集
 
+>t4: 更新dockerfile镜像文件
+
 
 
 
